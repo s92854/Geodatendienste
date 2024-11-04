@@ -283,4 +283,5 @@ WHERE
  laender.wkb_geometry IS NOT NULL
  AND exports_percent_gdp.jahr = %year%
 ````
+<img title="Open Layers Vorschau auf dem Geoservers" src="https://github.com/user-attachments/assets/558e4f7b-712e-44d5-bddf-ddc6f235a1f1">
 
