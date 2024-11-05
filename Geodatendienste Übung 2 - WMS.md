@@ -177,15 +177,14 @@ CREATE TABLE exports_percent_gdp (
 
 
 #### Daten in jeweilige Tabelle einfügen
+> Hier muss %sp% durch den persönlichen Pfad zu den Dateien ersetzt werden
 
 ````sql
-\copy wgi FROM
-'%sp%\wgi.csv' DELIMITER ';' CSV HEADER;
+\copy wgi FROM '%sp%\wgi.csv' DELIMITER ';' CSV HEADER;
 ````
 
 ````sql
-\copy exports_percent_gdp FROM
-'%sp%\exports_percent_gdp.csv' DELIMITER ';' CSV HEADER;
+\copy exports_percent_gdp FROM '%sp%\exports_percent_gdp.csv' DELIMITER ';' CSV HEADER;
 ````
 
 
@@ -210,8 +209,7 @@ SELECT
  exports_percent_gdp.iso3,
  exports_percent_gdp.jahr,
  exports_percent_gdp.value AS value_float, -- Originalwert, Größe der Kreise
- ROUND(exports_percent_gdp.value)::TEXT || '%' AS value_label, -- Gerundeter Wert (String) für die Beschriftung in
-Prozent
+ ROUND(exports_percent_gdp.value)::TEXT || '%' AS value_label, -- Gerundeter Wert (String) für die Beschriftung in Prozent
 
  -- Spalten aus Tabelle "laender"
  laender.id::INTEGER AS country_id, -- INTEGER konvertierung
