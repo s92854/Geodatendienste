@@ -283,3 +283,36 @@ WHERE
 ````
 <img title="Open Layers Vorschau auf dem Geoservers" src="https://github.com/user-attachments/assets/558e4f7b-712e-44d5-bddf-ddc6f235a1f1">
 
+
+#### Geometry erstellen?
+````sql
+SELECT ST_AsText(
+  ST_Envelope(
+    ST_Transform(wkb_geometry, 3857)
+  )
+) AS bbox
+FROM laender
+WHERE LAND = 'Deutschland';
+POLYGON((652888.8293406211 5987030.898794127,652888.8293406211 7372844.607748471,1673556.9874144716 7372844.607748471,1673556.9874144716 5987030.898794127,652888.8293406211 5987030.898794127))
+````
+
+#### ???
+````sql
+SERVICE=WMS&
+VERSION=1.1.1&
+REQUEST=GetFeatureInfo&
+FORMAT=image/png&
+TRANSPARENT=true&
+QUERY_LAYERS=gdd:exports_percent_gdp&
+STYLES=&
+LAYERS=gdd:exports_percent_gdp&
+exceptions=application/vnd.ogc.se_inimage&
+INFO_FORMAT=text/html&
+FEATURE_COUNT=50&
+X=50&
+Y=50&
+SRS=EPSG:3857&
+WIDTH=101&
+HEIGHT=101&
+BBOX=652888.8293406211,5987030.898794127,1673556.9874144716,7372844.607748471
+````
