@@ -284,20 +284,13 @@ WHERE
 <img title="Open Layers Vorschau auf dem Geoservers" src="https://github.com/user-attachments/assets/558e4f7b-712e-44d5-bddf-ddc6f235a1f1">
 
 
-#### Geometry erstellen?
-````sql
-SELECT ST_AsText(
-  ST_Envelope(
-    ST_Transform(wkb_geometry, 3857)
-  )
-) AS bbox
-FROM laender
-WHERE LAND = 'Deutschland';
-POLYGON((652888.8293406211 5987030.898794127,652888.8293406211 7372844.607748471,1673556.9874144716 7372844.607748471,1673556.9874144716 5987030.898794127,652888.8293406211 5987030.898794127))
-````
 
-#### ???
-````sql
+#### 3. Format der GetCapabilities Abfrage, sowie GetFeatureInfo-URL erstellen und Koordinaten für die Boundingbox festlegen
+Die Abfrage ist als **XML-Dokument** formatiert. Dies erkennt man an den xml-typischen Tags, wie z.B. ````<Name>gdd:exports_percent_gdp</Name>```` oder ````<Title>exports_percent_gdp</Title>````. Außerdem wird ein XML-Dokument, wie hier, immer mit ````<?xml version="1.0" encoding="UTF-8"?>```` begonnen.
+
+&nbsp;
+
+````xml
 SERVICE=WMS&
 VERSION=1.1.1&
 REQUEST=GetFeatureInfo&
@@ -316,3 +309,48 @@ WIDTH=101&
 HEIGHT=101&
 BBOX=652888.8293406211,5987030.898794127,1673556.9874144716,7372844.607748471
 ````
+
+
+
+#### 4. Geometry erstellen
+> in PGAdmin folgenden Code eingeben, um eine Boundingbox um Deutschland zu erstellen
+
+````sql
+SELECT ST_AsText(
+  ST_Envelope(
+    ST_Transform(wkb_geometry, 3857)
+  )
+) AS bbox
+FROM laender
+WHERE LAND = 'Deutschland';
+````
+
+
+
+#### 5. Koordinaten der Boundingbox
+
+Als Ergebnis kommt folgendes Polygon raus: *POLYGON((652888.8293406211 5987030.898794127,652888.8293406211 7372844.607748471,1673556.9874144716 7372844.607748471,1673556.9874144716 5987030.898794127,652888.8293406211 5987030.898794127))*
+
+
+
+
+#### 6. GetCapabilities Abfrage
+````xml
+http://localhost:8080/geoserver/wms?service=WMS&request=GetCapabilities
+````
+
+
+
+#### 7. Einladen des WMS in QGIS
+* Ändern der Projektion auf das "Angegebene Koordinatenreferenzsystem" (EPSG:3857)
+
+<img title="WMS Dienst in QGIS geladen" src="https://github.com/user-attachments/assets/cdc5f781-3724-4935-8b51-75a7e21872b9">
+
+
+
+#### 8. GetCapabilities Abfrage
+
+````xml
+
+````
+
