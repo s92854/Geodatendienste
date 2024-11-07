@@ -334,9 +334,9 @@ Als Ergebnis kommt folgendes Polygon raus: *POLYGON((652888.8293406211 5987030.8
 
 
 
-#### 6. GetCapabilities Abfrage
-````xml
-http://localhost:8080/geoserver/wms?service=WMS&request=GetCapabilities
+#### 6. URL für exports_percent_gdp
+````html
+http://localhost:8080/geoserver/gdd/wms
 ````
 
 
@@ -350,7 +350,13 @@ http://localhost:8080/geoserver/wms?service=WMS&request=GetCapabilities
 
 #### 8. GetCapabilities Abfrage
 
-````xml
-
+````html
+http://localhost:8080/geoserver/wms?service=WMS&request=GetCapabilities
 ````
 
+
+
+#### 9. Abfrage und Deckungskraft
+````queryable=”1“```` &rarr; abfragbar
+
+````Opaque=“0“```` &rarr; undurchsichtig
