@@ -5,7 +5,7 @@
 > Nico Haupt (956450),
 > Tara Richter (934172)
 
-Der Pfad zu persönlichen Datenspeicherorten wurde hier durch %sp% ersetzt und ist maschinenabhängig zu ändern. Über eine weitere Variable kann dieser Pfad auch in den Batchdateien gesetzt bzw. geändert werden.
+Der Pfad zu persönlichen Datenspeicherorten wurde hier durch %sp% ersetzt und ist maschinenabhängig zu ändern.
 
 ## 1. a)
 
@@ -138,7 +138,7 @@ CREATE TABLE wgi (
     PRIMARY KEY (landid, jahr)
 );
 
-copy wgi FROM 'E:\CloudStation\Studium\Semester 5\Geodatendienste\wgi.csv' DELIMITER ';' CSV HEADER;
+copy wgi FROM '%sp%\wgi.csv' DELIMITER ';' CSV HEADER;
 ````
 
 ### Version 2 - Setzen des PK nach dem Erstellen der Tabelle
@@ -150,7 +150,7 @@ CREATE TABLE wgi (
     wgi FLOAT
 );
 
-copy wgi FROM 'E:\CloudStation\Studium\Semester 5\Geodatendienste\wgi.csv' DELIMITER ';' CSV HEADER;
+copy wgi FROM '%sp%\wgi.csv' DELIMITER ';' CSV HEADER;
 
 ALTER TABLE wgi
 ADD PRIMARY KEY (landid, jahr);
@@ -192,7 +192,6 @@ CREATE TABLE exports_percent_gdp (
 
 
 ### Daten in jeweilige Tabelle einfügen
-> Hier muss %sp% durch den persönlichen Pfad zu den Dateien ersetzt werden
 
 ````sql
 \copy wgi FROM '%sp%\wgi.csv' DELIMITER ';' CSV HEADER;
