@@ -1,7 +1,7 @@
 # Geodatendienste Übung 2: WMS
 > 09.11.2024
 >
-> Chris Lazik (956219),
+> Christoph Lazik (956219),
 > Nico Haupt (956450),
 > Tara Richter (934172)
 
@@ -137,8 +137,6 @@ CREATE TABLE wgi (
     wgi FLOAT,
     PRIMARY KEY (landid, jahr)
 );
-
-copy wgi FROM '%sp%\wgi.csv' DELIMITER ';' CSV HEADER;
 ````
 
 ### Version 2 - Setzen des PK nach dem Erstellen der Tabelle
@@ -149,8 +147,6 @@ CREATE TABLE wgi (
     jahr INT,
     wgi FLOAT
 );
-
-copy wgi FROM '%sp%\wgi.csv' DELIMITER ';' CSV HEADER;
 
 ALTER TABLE wgi
 ADD PRIMARY KEY (landid, jahr);
@@ -356,7 +352,10 @@ http://localhost:8080/geoserver/gdd/wms
 
 
 ## 7. Einladen des WMS in QGIS
-* Ändern der Projektion auf das "Angegebene Koordinatenreferenzsystem" (EPSG:3857)
+1. WMS-URL erstellen und in QGIS als Quelle einladen
+2. WMS-Layer der Karte hinzufügen + Namen eingeben
+3. Auf "Verbinden" klicken
+4. Ändern der Projektion auf das "Angegebene Koordinatenreferenzsystem" (EPSG:3857)
 
 <img title="WMS Dienst in QGIS geladen" src="https://github.com/user-attachments/assets/cdc5f781-3724-4935-8b51-75a7e21872b9">
 
@@ -637,7 +636,7 @@ http://localhost:8080/geoserver/wms?service=WMS&request=GetCapabilities
 **Grafisch  sieht das Ergebnis wie folgt aus:**
 <img title="Gestylte Karte" src="https://github.com/user-attachments/assets/b604a2a1-9e06-406f-91c1-613e5a0962a6">
 
-> Nach vielen erfolglosen Versuchen, lies sich die Schriftfarbe innherhalb der blauen Kreise leider nicht ändern. Die Ursache dafür ist uns leider nicht bekannt.
+> Nach vielen erfolglosen Versuchen, lies sich die Schriftfarbe innherhalb der blauen Kreise leider nicht ändern. Die Ursache dafür ist uns leider nicht bekannt. Ebenso war es uns nicht möglich die Umlaute korrekt darzustellen oder wenigstens in nicht-Umlaute zu ändern.
 
 
 ## 11. GetLegendGraphic
