@@ -1,10 +1,13 @@
-# Geodatendienste Übung 2 - WMS
-
-## Vollständiger Code
+# Geodatendienste Übung 2: WMS
+> 09.11.2024
+>
+> Chris Lazik (956219),
+> Nico Haupt (956450),
+> Tara Richter (934172)
 
 Der Pfad zu persönlichen Datenspeicherorten wurde hier durch %sp% ersetzt und ist maschinenabhängig zu ändern. Über eine weitere Variable kann dieser Pfad auch in den Batchdateien gesetzt bzw. geändert werden.
 
-### 1. a)
+## 1. a)
 
 * erstellt Datenbanken "gdd" und "rdmg" im Loop
 * verwendet .pgpass Datei, um Passwortabfrage zu umgehen
@@ -39,7 +42,7 @@ pause
 
 
 
-### 1. b)
+## 1. b)
 
 ````bash
 @echo off
@@ -86,7 +89,7 @@ pause
 
 
 
-### 1. c)
+## 1. c)
 
 ````bash
 @echo off
@@ -114,7 +117,7 @@ pause
 
 
 
-### 1. d)
+## 1. d)
 
 ````bash
 ogr2ogr -f "PGDUMP" output.sql "%sp%\countries.shp" -nln laender -nlt MULTIPOLYGON -a_srs EPSG:4326
@@ -123,9 +126,9 @@ psql -U postgres -d gdd -f output.sql
 
 
 
-### 1. e)
+## 1. e)
 
-#### Version 1
+### Version 1 - Setzen des PK beim Erstellen der Tabelle
 
 ````sql
 CREATE TABLE wgi (
@@ -134,24 +137,36 @@ CREATE TABLE wgi (
     wgi FLOAT,
     PRIMARY KEY (landid, jahr)
 );
+
+copy wgi FROM 'E:\CloudStation\Studium\Semester 5\Geodatendienste\wgi.csv' DELIMITER ';' CSV HEADER;
 ````
 
-#### Version 2
+### Version 2 - Setzen des PK nach dem Erstellen der Tabelle
 
 ````sql
 CREATE TABLE wgi (
-    landid INT PRIMARY KEY,
+    landid INT,
     jahr INT,
     wgi FLOAT
 );
+
+copy wgi FROM 'E:\CloudStation\Studium\Semester 5\Geodatendienste\wgi.csv' DELIMITER ';' CSV HEADER;
 
 ALTER TABLE wgi
 ADD PRIMARY KEY (landid, jahr);
 ````
 
+#### Alternative
+Neben ````ALTER TABLE wgi ADD PRIMARY KEY(landid,jahr)```` ist auch diese Variante noch möglich:
+
+````sql
+ALTER TABLE wgi
+ADD CONSTRAINT pk_wgi PRIMARY KEY (landid,jahr);
+````
 
 
-### 1. f)
+
+## 1. f)
 
 ````sql
 CREATE TABLE exports_percent_gdp (
@@ -166,9 +181,9 @@ CREATE TABLE exports_percent_gdp (
 
 
 
-### 2.
+## 2.
 
-#### In CMD mit Datenbank verbinden
+### In CMD mit Datenbank verbinden
 
 ````bash
 "%ppath%\psql -U postgres -d gdd"
@@ -176,7 +191,7 @@ CREATE TABLE exports_percent_gdp (
 
 
 
-#### Daten in jeweilige Tabelle einfügen
+### Daten in jeweilige Tabelle einfügen
 > Hier muss %sp% durch den persönlichen Pfad zu den Dateien ersetzt werden
 
 ````sql
@@ -189,7 +204,7 @@ CREATE TABLE exports_percent_gdp (
 
 
 
-#### Test auf Vorhandensein der Daten (in PGAdmin)
+### Test auf Vorhandensein der Daten (in PGAdmin)
 
 ````sql
 SELECT * FROM wgi
@@ -199,7 +214,7 @@ SELECT * FROM exports_percent_gdp
 
 
 
-#### JOIN als View erstellen
+### JOIN als View erstellen
 
 ````sql
 CREATE VIEW exports_wgi_join AS
@@ -245,14 +260,14 @@ WHERE
 
 
 
-#### GeoServer-Umgebung installieren
+### GeoServer-Umgebung installieren
 
 1. [Java JDK Version 17 installieren](https://adoptium.net/de/temurin/releases/?os=windows&arch=x64&package=jdk&version=17)
 2. [GeoServer einrichten](https://sourceforge.net/projects/geoserver/)
 
 
 
-#### SQL View erstellen
+### SQL View erstellen
 
 ````sql
 SELECT
@@ -285,7 +300,7 @@ WHERE
 
 
 
-#### 3. Format der GetCapabilities Abfrage, sowie GetFeatureInfo-URL erstellen und Koordinaten für die Boundingbox festlegen
+## 3. Format der GetCapabilities Abfrage, sowie GetFeatureInfo-URL erstellen und Koordinaten für die Boundingbox festlegen
 Die Abfrage ist als **XML-Dokument** formatiert. Dies erkennt man an den xml-typischen Tags, wie z.B. ````<Name>gdd:exports_percent_gdp</Name>```` oder ````<Title>exports_percent_gdp</Title>````. Außerdem wird ein XML-Dokument, wie hier, immer mit ````<?xml version="1.0" encoding="UTF-8"?>```` begonnen.
 
 &nbsp;
@@ -312,7 +327,7 @@ BBOX=652888.8293406211,5987030.898794127,1673556.9874144716,7372844.607748471
 
 
 
-#### 4. Geometry erstellen
+## 4. Geometry erstellen
 > in PGAdmin folgenden Code eingeben, um eine Boundingbox um Deutschland zu erstellen
 
 ````sql
@@ -327,28 +342,28 @@ WHERE LAND = 'Deutschland';
 
 
 
-#### 5. Koordinaten der Boundingbox
+## 5. Koordinaten der Boundingbox
 
 Als Ergebnis kommt folgendes Polygon raus: *POLYGON((652888.8293406211 5987030.898794127,652888.8293406211 7372844.607748471,1673556.9874144716 7372844.607748471,1673556.9874144716 5987030.898794127,652888.8293406211 5987030.898794127))*
 
 
 
 
-#### 6. URL für exports_percent_gdp
+## 6. URL für exports_percent_gdp
 ````html
 http://localhost:8080/geoserver/gdd/wms
 ````
 
 
 
-#### 7. Einladen des WMS in QGIS
+## 7. Einladen des WMS in QGIS
 * Ändern der Projektion auf das "Angegebene Koordinatenreferenzsystem" (EPSG:3857)
 
 <img title="WMS Dienst in QGIS geladen" src="https://github.com/user-attachments/assets/cdc5f781-3724-4935-8b51-75a7e21872b9">
 
 
 
-#### 8. GetCapabilities Abfrage
+## 8. GetCapabilities Abfrage
 
 ````html
 http://localhost:8080/geoserver/wms?service=WMS&request=GetCapabilities
@@ -356,7 +371,282 @@ http://localhost:8080/geoserver/wms?service=WMS&request=GetCapabilities
 
 
 
-#### 9. Abfrage und Deckungskraft
+## 9. Abfrage und Deckungskraft
 ````queryable=”1“```` &rarr; abfragbar
 
 ````Opaque=“0“```` &rarr; undurchsichtig
+
+
+
+## 10. Styling / Visualisierung
+````xml
+<?xml version="1.0" encoding="UTF-8"?>
+<sld:UserStyle xmlns="http://www.opengis.net/sld" 
+               xmlns:sld="http://www.opengis.net/sld" 
+               xmlns:ogc="http://www.opengis.net/ogc" 
+               xmlns:gml="http://www.opengis.net/gml">
+  <sld:Title/>
+  <FeatureTypeStyle>
+    <Rule>
+      <Name>high</Name>
+      <Title>WGI &lt; -0.5</Title>
+      <ogc:Filter>
+        <ogc:PropertyIsLessThan>
+          <ogc:PropertyName>wgi</ogc:PropertyName>
+          <ogc:Literal>-0.5</ogc:Literal>
+        </ogc:PropertyIsLessThan>
+      </ogc:Filter>
+      <PolygonSymbolizer>
+        <Fill>
+          <CssParameter name="fill">#fc8d59</CssParameter>
+        </Fill>
+      </PolygonSymbolizer>
+    </Rule>
+
+    <Rule>
+      <Name>medium</Name>
+      <Title>WGI &gt; -0.5 und &lt; 0.5</Title>
+      <ogc:Filter>
+        <ogc:And>
+          <ogc:PropertyIsGreaterThanOrEqualTo>
+            <ogc:PropertyName>wgi</ogc:PropertyName>
+            <ogc:Literal>-0.5</ogc:Literal>
+          </ogc:PropertyIsGreaterThanOrEqualTo>
+          <ogc:PropertyIsLessThan>
+            <ogc:PropertyName>wgi</ogc:PropertyName>
+            <ogc:Literal>0.5</ogc:Literal>
+          </ogc:PropertyIsLessThan>
+        </ogc:And>
+      </ogc:Filter>
+      <PolygonSymbolizer>
+        <Fill>
+          <CssParameter name="fill">#ffffbf</CssParameter>
+        </Fill>
+      </PolygonSymbolizer>
+    </Rule>
+
+    <Rule>
+      <Name>low</Name>
+      <Title>WGI &gt; 0.5</Title>
+      <ogc:Filter>
+        <ogc:PropertyIsGreaterThan>
+          <ogc:PropertyName>wgi</ogc:PropertyName>
+          <ogc:Literal>0.5</ogc:Literal>
+        </ogc:PropertyIsGreaterThan>
+      </ogc:Filter>
+      <PolygonSymbolizer>
+        <Fill>
+          <CssParameter name="fill">#91cf60</CssParameter>
+        </Fill>
+      </PolygonSymbolizer>
+    </Rule>
+
+    <Rule>
+      <Title>Boundary</Title>
+      <LineSymbolizer>
+        <Stroke>
+          <CssParameter name="stroke">#e2e2e2</CssParameter>
+        </Stroke>
+      </LineSymbolizer>
+      <TextSymbolizer>
+        <sld:Geometry>
+          <ogc:Function name="centroid">
+            <ogc:PropertyName>wkb_geometry</ogc:PropertyName>
+          </ogc:Function>
+        </sld:Geometry>
+        <Label>
+          <ogc:PropertyName>land</ogc:PropertyName>
+        </Label>
+        <Font>
+          <CssParameter name="font-family">Times New Roman</CssParameter>
+          <CssParameter name="font-style">Normal</CssParameter>
+          <CssParameter name="font-size">14</CssParameter>
+        </Font>
+        <LabelPlacement>
+          <PointPlacement>
+            <AnchorPoint>
+              <AnchorPointX>-0.5</AnchorPointX>
+              <AnchorPointY>0.5</AnchorPointY>
+            </AnchorPoint>
+          </PointPlacement>
+        </LabelPlacement>
+      </TextSymbolizer>
+    </Rule>
+    <Rule>
+      <Name>export_low</Name>
+      <Title>Exporte &lt; 20 % vom BSP</Title>
+      <ogc:Filter>
+        <ogc:PropertyIsLessThan>
+          <ogc:PropertyName>value_label</ogc:PropertyName>
+          <ogc:Literal>20</ogc:Literal>
+        </ogc:PropertyIsLessThan>
+      </ogc:Filter>
+      <TextSymbolizer>
+        <sld:Geometry>
+          <ogc:Function name="centroid">
+            <ogc:PropertyName>wkb_geometry</ogc:PropertyName>
+          </ogc:Function>
+        </sld:Geometry>
+        <Label>
+          <ogc:PropertyName>value_label</ogc:PropertyName>
+        </Label>
+        <Font>
+          <CssParameter name="font-family">Arial</CssParameter>
+          <CssParameter name="font-style">normal</CssParameter>
+          <CssParameter name="font-weight">bold</CssParameter>
+          <CssParameter name="font-size">6</CssParameter>
+          <CssParameter name="fill">#FFFFFF</CssParameter>
+        </Font>
+        <LabelPlacement>
+          <PointPlacement>
+            <AnchorPoint>
+              <AnchorPointX>0.5</AnchorPointX>
+              <AnchorPointY>0.5</AnchorPointY>
+            </AnchorPoint>
+          </PointPlacement>
+        </LabelPlacement>
+      </TextSymbolizer>
+      <PointSymbolizer>
+        <sld:Geometry>
+          <ogc:Function name="centroid">
+            <ogc:PropertyName>wkb_geometry</ogc:PropertyName>
+          </ogc:Function>
+        </sld:Geometry>
+        <Graphic>
+          <Mark>
+            <WellKnownName>circle</WellKnownName>
+            <Fill>
+              <CssParameter name="fill">#0033CC</CssParameter>
+            </Fill>
+          </Mark>
+          <Size>10</Size>
+        </Graphic>
+      </PointSymbolizer>
+    </Rule>
+    <Rule>
+      <Name>export_medium</Name>
+      <Title>Exporte 20-40% vom BSP</Title>
+      <ogc:Filter>
+        <ogc:And>
+          <ogc:PropertyIsGreaterThanOrEqualTo>
+            <ogc:PropertyName>value_label</ogc:PropertyName>
+            <ogc:Literal>20</ogc:Literal>
+          </ogc:PropertyIsGreaterThanOrEqualTo>
+          <ogc:PropertyIsLessThanOrEqualTo>
+            <ogc:PropertyName>value_label</ogc:PropertyName>
+            <ogc:Literal>40</ogc:Literal>
+          </ogc:PropertyIsLessThanOrEqualTo>
+        </ogc:And>
+      </ogc:Filter>
+      <TextSymbolizer>
+        <sld:Geometry>
+          <ogc:Function name="centroid">
+            <ogc:PropertyName>wkb_geometry</ogc:PropertyName>
+          </ogc:Function>
+        </sld:Geometry>
+        <Label>
+          <ogc:PropertyName>value_label</ogc:PropertyName>
+        </Label>
+        <Font>
+          <CssParameter name="font-family">Arial</CssParameter>
+          <CssParameter name="font-style">normal</CssParameter>
+          <CssParameter name="font-weight">bold</CssParameter>
+          <CssParameter name="font-size">10</CssParameter>
+          <CssParameter name="fill">#ffffff</CssParameter>
+        </Font>
+        <LabelPlacement>
+          <PointPlacement>
+            <AnchorPoint>
+              <AnchorPointX>0.5</AnchorPointX>
+              <AnchorPointY>0.5</AnchorPointY>
+            </AnchorPoint>
+          </PointPlacement>
+        </LabelPlacement>
+      </TextSymbolizer>
+      <PointSymbolizer>
+        <sld:Geometry>
+          <ogc:Function name="centroid">
+            <ogc:PropertyName>wkb_geometry</ogc:PropertyName>
+          </ogc:Function>
+        </sld:Geometry>
+        <Graphic>
+          <Mark>
+            <WellKnownName>circle</WellKnownName>
+            <Fill>
+              <CssParameter name="fill">#0033CC</CssParameter>
+            </Fill>
+          </Mark>
+          <Size>20</Size>
+        </Graphic>
+      </PointSymbolizer>
+    </Rule>
+    <Rule>
+      <Name>export_high</Name>
+      <Title>Exporte &gt; 40% vom BSP</Title>
+      <ogc:Filter>
+        <ogc:PropertyIsGreaterThan>
+          <ogc:PropertyName>value_label</ogc:PropertyName>
+          <ogc:Literal>40</ogc:Literal>
+        </ogc:PropertyIsGreaterThan>
+      </ogc:Filter>
+      <TextSymbolizer>
+        <sld:Geometry>
+          <ogc:Function name="centroid">
+            <ogc:PropertyName>wkb_geometry</ogc:PropertyName>
+          </ogc:Function>
+        </sld:Geometry>
+        <Label>
+          <ogc:PropertyName>value_label</ogc:PropertyName>
+        </Label>
+        <Font>
+          <CssParameter name="font-family">Arial</CssParameter>
+          <CssParameter name="font-style">normal</CssParameter>
+          <CssParameter name="font-weight">bold</CssParameter>
+          <CssParameter name="font-size">14</CssParameter>
+          <CssParameter name="fill">#FFFFFF</CssParameter>
+        </Font>
+        <LabelPlacement>
+          <PointPlacement>
+            <AnchorPoint>
+              <AnchorPointX>0.5</AnchorPointX>
+              <AnchorPointY>0.5</AnchorPointY>
+            </AnchorPoint>
+          </PointPlacement>
+        </LabelPlacement>
+      </TextSymbolizer>
+      <PointSymbolizer>
+        <sld:Geometry>
+          <ogc:Function name="centroid">
+            <ogc:PropertyName>wkb_geometry</ogc:PropertyName>
+          </ogc:Function>
+        </sld:Geometry>
+        <Graphic>
+          <Mark>
+            <WellKnownName>circle</WellKnownName>
+            <Fill>
+              <CssParameter name="fill">#0033CC</CssParameter>
+            </Fill>
+          </Mark>
+          <Size>35</Size>
+        </Graphic>
+      </PointSymbolizer>
+    </Rule>
+  </FeatureTypeStyle>
+</sld:UserStyle>
+````
+
+**Grafisch  sieht das Ergebnis wie folgt aus:**
+<img title="Gestylte Karte" src="https://github.com/user-attachments/assets/b604a2a1-9e06-406f-91c1-613e5a0962a6">
+
+> Nach vielen erfolglosen Versuchen, lies sich die Schriftfarbe innherhalb der blauen Kreise leider nicht ändern. Die Ursache dafür ist uns leider nicht bekannt.
+
+
+## 11. GetLegendGraphic
+
+````http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=exports_percent_gdp````
+
+<img title="Legende der gestylten Karte" src="https://github.com/user-attachments/assets/c80ae53a-8185-4d2e-ad8a-663a9fbb8505">
+
+
+## 12. Standardjahr auf 2000 einstellen
+````http://localhost:8080/geoserver/gdd/wms?service=WMS&version=1.1.0&request=GetMap&layers=gdd%3Aexports_percent_gdp&bbox=-2.0037508342789244E7%2C-7538976.357111702%2C2.003750838011201E7%2C1.7926778564476732E7&width=768&height=488&srs=EPSG%3A3857&styles=&format=application/openlayers&viewparams:jahr=2000````
